@@ -142,7 +142,7 @@ namespace Client
 
             Console.WriteLine("\nCreated mixture:");
             PrintMixture(newMixture);
-            Console.WriteLine("Do you want to save mixture? [y/n]");
+            Console.Write("Do you want to save mixture? [y/n]: ");
             var toSave = Console.ReadLine();
             return "y".Equals(toSave) ? newMixture : null;
         }
@@ -168,7 +168,7 @@ namespace Client
             Console.WriteLine(mixture.Name);
             foreach (var component in mixture.Components)
             {
-                var line = $"\t{component.Item.Name}: {component.Quantity}";
+                var line = $"\t{component.Item.Name}:\t{component.Quantity}";
                 if (ComponentType.Optional.Equals(component.ComponentType))
                 {
                     line += "\t(optional)";
@@ -187,10 +187,10 @@ namespace Client
             
             foreach (var component in components)
             {
-                var line = $"{component.Item.Name}: {component.Quantity}";
+                var line = $"{component.Item.Name}:\t{component.Quantity}";
                 if (ComponentType.Optional.Equals(component.ComponentType))
                 {
-                    line += " (optional)";
+                    line += "\t(optional)";
                 }
                 Console.WriteLine(line);
             };

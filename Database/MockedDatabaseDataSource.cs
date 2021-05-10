@@ -13,55 +13,96 @@ namespace Database
             {
                 new MixtureDAO()
                 {
-                    Name = "Test Mixture 1",
+                    Name = "Mickey Mouse",
                     Components = new List<ComponentDAO>()
                     {
                         new ComponentDAO()
                         {
+                            ComponentType = "Mandatory",
+                            Item = "Tomato juice",
+                            Quantity = 30
+                        },
+
+                        new ComponentDAO()
+                        {
+                            ComponentType = "Mandatory",
+                            Item = "Lemon juice",
+                            Quantity = 20
+                        },
+
+                        new ComponentDAO()
+                        {
                             ComponentType = "Optional",
-                            Item = "Test Component 1",
+                            Item = "Tabasco sauce",
                             Quantity = 1
                         },
 
                         new ComponentDAO()
                         {
                             ComponentType = "Optional",
-                            Item = "Test Component 2",
-                            Quantity = 2
-                        },
-
-                        new ComponentDAO()
-                        {
-                            ComponentType = "Mandatory",
-                            Item = "Test Component 3",
+                            Item = "Ice cube",
                             Quantity = 3
                         }
                     }
                 },
                 new MixtureDAO()
                 {
-                    Name = "Test Mixture 2",
+                    Name = "Apple Pie",
                     Components = new List<ComponentDAO>()
                     {
                         new ComponentDAO()
                         {
                             ComponentType = "Mandatory",
-                            Item = "Test Component 21",
+                            Item = "Apple juice",
+                            Quantity = 30
+                        },
+
+                        new ComponentDAO()
+                        {
+                            ComponentType = "Mandatory",
+                            Item = "Lemon juice",
+                            Quantity = 10
+                        },
+
+                        new ComponentDAO()
+                        {
+                            ComponentType = "Optional",
+                            Item = "Grenadine syrup",
+                            Quantity = 1
+                        }
+                    }
+                },
+                new MixtureDAO()
+                {
+                    Name = "Cranberry Cooler",
+                    Components = new List<ComponentDAO>()
+                    {
+                        new ComponentDAO()
+                        {
+                            ComponentType = "Mandatory",
+                            Item = "Cranberry juice",
+                            Quantity = 30
+                        },
+
+                        new ComponentDAO()
+                        {
+                            ComponentType = "Mandatory",
+                            Item = "Apple juice",
+                            Quantity = 10
+                        },
+
+                        new ComponentDAO()
+                        {
+                            ComponentType = "Mandatory",
+                            Item = "Sweet & Sour",
                             Quantity = 1
                         },
 
                         new ComponentDAO()
                         {
                             ComponentType = "Mandatory",
-                            Item = "Test Component 22",
-                            Quantity = 2
-                        },
-
-                        new ComponentDAO()
-                        {
-                            ComponentType = "Mandatory",
-                            Item = "Test Component 23",
-                            Quantity = 3
+                            Item = "Rosemary",
+                            Quantity = 1
                         }
                     }
                 }
