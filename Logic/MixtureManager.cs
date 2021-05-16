@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Database;
 using DataModel;
@@ -39,6 +40,16 @@ namespace Logic
         }
         public void SaveMixture(Mixture mixture)
         {
+            if (mixture?.Components is null || mixture.Name is null || mixture.Name == "")
+            {
+                throw new ArgumentException("Invalid mixture");
+            }
+
+            if (mixture.Components.Any(component => component.Item?.Name is null || component.Item.Name == ""))
+            {
+                throw new ArgumentException($"Invalid component inside mixture: {mixture.Name}");
+            }
+
             _dataProxy.CreateMixture(mixture);
         }
     }

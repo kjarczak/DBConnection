@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Database;
@@ -213,9 +214,86 @@ namespace LogicTests
         [Test]
         public void SaveMixtureTest()
         {
-            _emptyManager.SaveMixture(new Mixture());
+
+            var mixture = new Mixture()
+            {
+                Name = "test",
+                Components = new List<Component>() {new Component() {Quantity = 1,ComponentType = ComponentType.Mandatory, Item = new Item() {Name = "test"}}}
+            };
+            _emptyManager.SaveMixture(mixture);
             var actual = _emptyManager.GetAllMixtures().Count;
             Assert.AreEqual(1, actual);
+        }
+
+        [Test]
+        public void SaveMixtureEmptyName()
+        {
+
+            var mixture = new Mixture()
+            {
+                Name = "",
+                Components = new List<Component>() {new Component() {Quantity = 1,ComponentType = ComponentType.Mandatory, Item = new Item() {Name = "test"}}}
+            };
+            Assert.Throws<ArgumentException>(() => _emptyManager.SaveMixture(mixture));
+        }
+
+        [Test]
+        public void SaveMixtureNullName()
+        {
+
+            var mixture = new Mixture()
+            {
+                Name = null,
+                Components = new List<Component>() { new Component() { Quantity = 1, ComponentType = ComponentType.Mandatory, Item = new Item() { Name = null } } }
+            };
+            Assert.Throws<ArgumentException>(() => _emptyManager.SaveMixture(mixture));
+        }
+
+        [Test]
+        public void SaveMixtureItemEmptyName()
+        {
+
+            var mixture = new Mixture()
+            {
+                Name = "test",
+                Components = new List<Component>() { new Component() { Quantity = 1, ComponentType = ComponentType.Mandatory, Item = new Item() { Name = "" } } }
+            };
+            Assert.Throws<ArgumentException>(() => _emptyManager.SaveMixture(mixture));
+        }
+
+        [Test]
+        public void SaveMixtureItemNullName()
+        {
+
+            var mixture = new Mixture()
+            {
+                Name = "test",
+                Components = new List<Component>() { new Component() { Quantity = 1, ComponentType = ComponentType.Mandatory, Item = new Item() { Name = null } } }
+            };
+            Assert.Throws<ArgumentException>(() => _emptyManager.SaveMixture(mixture));
+        }
+
+
+        [Test]
+        public void SaveNullMixtureTest()
+        {
+            Assert.Throws<ArgumentException>(()=> _emptyManager.SaveMixture(null));
+        }
+
+        [Test]
+        public void SaveMixtureWithNullComponent()
+        {
+            var mixture = new Mixture();
+            mixture.Components.Add(null);
+            Assert.Throws<ArgumentException>(() => _emptyManager.SaveMixture(mixture));
+        }
+
+        [Test]
+        public void SaveMixtureWithNullItem()
+        {
+            var mixture = new Mixture();
+            mixture.Components.Add(new Component(){Item = null});
+            Assert.Throws<ArgumentException>(() => _emptyManager.SaveMixture(mixture));
         }
     }
 }
