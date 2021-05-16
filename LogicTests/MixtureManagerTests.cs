@@ -17,9 +17,9 @@ namespace LogicTests
         public void Setup()
         {
             IDataSource dataSource;
-            DataProxy dataProxy;
+            IDataProxy dataProxy;
 
-            List<MixtureDAO> normalMixtures = new List<MixtureDAO>()
+            var normalMixtures = new List<MixtureDAO>()
             {
                 new MixtureDAO{
                     Name = "Mixture 1",
@@ -148,7 +148,7 @@ namespace LogicTests
             dataProxy = new DataProxy(dataSource);
             _normalManager = new MixtureManager(dataProxy);
 
-            List<MixtureDAO> emptyMixtures = new List<MixtureDAO>();
+            var emptyMixtures = new List<MixtureDAO>();
             dataSource = new MockedDatabaseDataSource(emptyMixtures);
             dataProxy = new DataProxy(dataSource);
             _emptyManager = new MixtureManager(dataProxy);

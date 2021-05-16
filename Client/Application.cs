@@ -6,11 +6,17 @@ using Logic;
 
 namespace Client
 {
-    public static class UserInterface
+    public class Application
     {
-        public static void Run()
+        private readonly IMixtureManager _mixtureManager;
+
+        public Application(IMixtureManager mixtureManager)
         {
-            var manager = new MixtureManager();
+            _mixtureManager = mixtureManager;
+        }
+        
+        public void Run()
+        {
             Console.WriteLine("=== Welcome to the mixer app ===");
             while (true)
             {
@@ -22,7 +28,7 @@ namespace Client
                         var mixture = CreateMixture();
                         if (mixture != null)
                         {
-                            manager.SaveMixture(mixture);
+                            _mixtureManager.SaveMixture(mixture);
                         }
                         break;
 
@@ -30,14 +36,14 @@ namespace Client
                     case "components":
                         if (tokens.Count < 2)
                         {
-                            var components = manager.GetMinimalComponents();
+                            var components = _mixtureManager.GetMinimalComponents();
                             PrintComponents(components);
                         }
                         else
                         {
                             if ("-a".Equals(tokens[1]))
                             {
-                                var components = manager.GetAllComponents();
+                                var components = _mixtureManager.GetAllComponents();
                                 PrintComponents(components);
                             }
                             else
@@ -51,14 +57,14 @@ namespace Client
                     case "mixtures":
                         if (tokens.Count < 2)
                         {
-                            var mixtures = manager.GetMinimalMixtures();
+                            var mixtures = _mixtureManager.GetMinimalMixtures();
                             PrintMixtures(mixtures);
                         }
                         else
                         {
                             if ("-a".Equals(tokens[1]))
                             {
-                                var mixtures = manager.GetAllMixtures();
+                                var mixtures = _mixtureManager.GetAllMixtures();
                                 PrintMixtures(mixtures);
                             }
                             else
@@ -89,66 +95,85 @@ namespace Client
             }
         }
 
-
-        private static Mixture CreateMixture()
+        private Mixture CreateMixture()
         {
-            Console.WriteLine("Mixture creation");
-            Console.Write("Name: ");
-            var name = Console.ReadLine();
-            var components = new List<Component>();
+            var mixtureBuilder = new MixtureBuilder();
+            var componentBuilder = new ComponentBuilder();
+            var errorFlag = false;
+            
+            do
+            {
+                Console.WriteLine("Mixture creation");
+                Console.Write("Name: ");
+                try
+                {
+                    mixtureBuilder.AddName(Console.ReadLine());
+                    errorFlag = false;
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Invalid mixture's name. Try one more time.");
+                    errorFlag = true;
+                }
+            } while (errorFlag);
 
             string key;
             Console.WriteLine("Components:");
             do
             {
-                var component = new Component();
+                componentBuilder.Reset();
+                do
+                {
+                    Console.Write("\tItem`s name: ");
+                    try
+                    {
+                        componentBuilder.AddItem(Console.ReadLine());
+                        errorFlag = false;
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine("Invalid item's name. Try one more time.");
+                        errorFlag = true;
+                    }
+                } while (errorFlag);
 
-                Console.Write("\tItem`s name: ");
-                var itemName = Console.ReadLine();
-                component.Item = new Item() { Name = itemName };
-
-                int quantity;
-                bool isParsed;
                 do
                 {
                     Console.Write("\tItem`s quantity: ");
-                    var itemQuantityString = Console.ReadLine();
-                    isParsed = int.TryParse(itemQuantityString, out quantity);
-                    if (!isParsed)
+                    try
                     {
-                        Console.WriteLine("\tNumber invalid");
+                        var input = Console.ReadLine();
+                        var quantity = int.Parse(input ?? string.Empty);
+                        componentBuilder.AddQuantity(quantity);
+                        errorFlag = false;
                     }
-                } while (!isParsed);
-                component.Quantity = quantity;
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Invalid quantity. Try one more time.");
+                        errorFlag = true;
+                    }
+                } while (errorFlag);
+
 
                 Console.Write("\tIs component optional? [y/n]: ");
                 var isOptional = Console.ReadLine();
                 if ("y".Equals(isOptional))
                 {
-                    component.ComponentType = ComponentType.Optional;
+                    componentBuilder.AddType(ComponentType.Optional);
                 }
 
-
-                components.Add(component);
+                mixtureBuilder.AddComponent(componentBuilder.Build());
                 Console.Write("Add another component? [y/n]: ");
                 key = Console.ReadLine();
             } while ("y".Equals(key));
 
-            var newMixture = new Mixture()
-            {
-                Name = name,
-                Components = components
-            };
-
+            var newMixture = mixtureBuilder.Build();
             Console.WriteLine("\nCreated mixture:");
             PrintMixture(newMixture);
             Console.Write("Do you want to save mixture? [y/n]: ");
-            var toSave = Console.ReadLine();
-            return "y".Equals(toSave) ? newMixture : null;
+            return "y".Equals(Console.ReadLine()) ? newMixture : null;
         }
-
-
-        private static void PrintMixtures(List<Mixture> mixtures)
+        private void PrintMixtures(ICollection<Mixture> mixtures)
         {
             if (mixtures == null || mixtures.Count == 0)
             {
@@ -162,8 +187,7 @@ namespace Client
                 Console.WriteLine();
             }
         }
-
-        private static void PrintMixture(Mixture mixture)
+        private void PrintMixture(Mixture mixture)
         {
             Console.WriteLine(mixture.Name);
             foreach (var component in mixture.Components)
@@ -176,8 +200,7 @@ namespace Client
                 Console.WriteLine("\t" + line);
             }
         }
-
-        private static void PrintComponents(List<Component> components)
+        private void PrintComponents(ICollection<Component> components)
         {
             if (components == null || components.Count == 0)
             {
@@ -195,8 +218,7 @@ namespace Client
                 Console.WriteLine(line);
             };
         }
-
-        private static void PrintHelp()
+        private void PrintHelp()
         {
             Console.WriteLine("\nCOMMANDS:" +
                               "\nmixtures \tshow list of mixtures with mandatory components" +

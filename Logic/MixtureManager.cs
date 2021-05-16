@@ -5,31 +5,26 @@ using DataModel;
 
 namespace Logic
 {
-    public class MixtureManager
+    public class MixtureManager : IMixtureManager
     {
-        private readonly DataProxy _data;
+        private readonly IDataProxy _dataProxy;
 
-        public MixtureManager()
+        public MixtureManager(IDataProxy dataProxy)
         {
-            _data = new DataProxy();
-        }
-        public MixtureManager(DataProxy dataProxy)
-        {
-            _data = dataProxy;
+            _dataProxy = dataProxy;
         }
 
         public List<Mixture> GetAllMixtures()
         {
-            return _data.GetMixtures();
+            return _dataProxy.GetMixtures();
         }
         public List<Component> GetAllComponents()
         {
-            return _data.GetComponents();
+            return _dataProxy.GetComponents();
         }
-
         public List<Mixture> GetMinimalMixtures()
         {
-            var mixtures = _data.GetMixtures();
+            var mixtures = _dataProxy.GetMixtures();
             foreach (var mixture in mixtures)
             {
                 var trimmedComponents = mixture.Components.Where(s=> ComponentType.Mandatory.Equals(s.ComponentType)).ToList();
@@ -37,16 +32,14 @@ namespace Logic
             }
             return mixtures;
         }
-
         public List<Component> GetMinimalComponents()
         {
-            var components = _data.GetComponents();
+            var components = _dataProxy.GetComponents();
             return components.Where(s => ComponentType.Mandatory.Equals(s.ComponentType)).ToList();
         }
-
         public void SaveMixture(Mixture mixture)
         {
-            _data.CreateMixture(mixture);
+            _dataProxy.CreateMixture(mixture);
         }
     }
 }

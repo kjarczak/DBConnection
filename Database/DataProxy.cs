@@ -7,23 +7,31 @@ using DataModel;
 
 namespace Database
 {
-    public class DataProxy
+    public class DataProxy : IDataProxy
     {
-        private readonly IDataSource _data;
+        private readonly IDataSource _dataSource;
         private IMapper _mapper;
 
-        public DataProxy()
+        public DataProxy(IDataSource dataSourceSource)
         {
-            _data = new MockedDatabaseDataSource();
+            _dataSource = dataSourceSource;
             ConfigureMapper();
         }
-
-        public DataProxy(IDataSource dataSource)
+        
+        public List<Mixture> GetMixtures()
         {
-            _data = dataSource;
-            ConfigureMapper();
+            var mixturesDAO = _dataSource.GetMixtures();
+            return mixturesDAO.Select(mixtureDAO => _mapper.Map<Mixture>(mixtureDAO)).ToList();
         }
-
+        public List<Component> GetComponents()
+        {
+            var componentsDAO = _dataSource.GetComponents();
+            return componentsDAO.Select(components => _mapper.Map<Component>(components)).ToList();
+        }
+        public void CreateMixture(Mixture mixture)
+        { 
+            _dataSource.CreateMixture(_mapper.Map<MixtureDAO>(mixture));
+        }
         private void ConfigureMapper()
         {
             var config = new MapperConfiguration(cfg =>
@@ -40,23 +48,6 @@ namespace Database
                     .ForMember(dest => dest.ComponentType, opt => opt.MapFrom(src => src.ComponentType.ToString()));
             });
             _mapper = config.CreateMapper();
-        }
-
-
-        public List<Mixture> GetMixtures()
-        {
-            var mixturesDAO = _data.GetMixtures();
-            return mixturesDAO.Select(mixtureDAO => _mapper.Map<Mixture>(mixtureDAO)).ToList();
-        }
-        public List<Component> GetComponents()
-        {
-            var componentsDAO = _data.GetComponents();
-            return componentsDAO.Select(componentsDAO => _mapper.Map<Component>(componentsDAO)).ToList();
-        }
-
-        public void CreateMixture(Mixture mixture)
-        { 
-            _data.CreateMixture(_mapper.Map<MixtureDAO>(mixture));
         }
     }
 }
